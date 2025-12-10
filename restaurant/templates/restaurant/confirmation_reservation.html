@@ -1,0 +1,83 @@
+{% extends 'restaurant/base.html' %}
+
+{% block title %}Confirmation - Restaurant Pro{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-xl p-8 text-center">
+        <div class="mb-6">
+            <i class="fas fa-check-circle text-green-500 text-6xl mb-4"></i>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Réservation Confirmée !</h1>
+            <p class="text-gray-600">Votre réservation a été enregistrée avec succès</p>
+        </div>
+        
+        <div class="bg-gray-50 rounded-lg p-6 mb-6 text-left">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Détails de votre réservation</h2>
+            
+            <div class="space-y-3">
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Nom :</span>
+                    <span class="font-semibold text-gray-800">{{ reservation.client_nom }}</span>
+                </div>
+                
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Téléphone :</span>
+                    <span class="font-semibold text-gray-800">{{ reservation.client_telephone }}</span>
+                </div>
+                
+                {% if reservation.client_email %}
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Email :</span>
+                    <span class="font-semibold text-gray-800">{{ reservation.client_email }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="flex justify-between border-t pt-3">
+                    <span class="text-gray-600">Table :</span>
+                    <span class="font-semibold text-gray-800">Table {{ reservation.table.numero }}</span>
+                </div>
+                
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Nombre de personnes :</span>
+                    <span class="font-semibold text-gray-800">{{ reservation.nombre_personnes }} personnes</span>
+                </div>
+                
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Date et heure :</span>
+                    <span class="font-semibold text-gray-800">{{ reservation.date_reservation|date:"d/m/Y à H:i" }}</span>
+                </div>
+                
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Statut :</span>
+                    <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold">
+                        {{ reservation.get_statut_display }}
+                    </span>
+                </div>
+                
+                {% if reservation.notes %}
+                <div class="border-t pt-3">
+                    <span class="text-gray-600">Notes :</span>
+                    <p class="text-gray-800 mt-1">{{ reservation.notes }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="bg-blue-50 rounded-lg p-4 mb-6">
+            <p class="text-blue-800">
+                <i class="fas fa-info-circle mr-2"></i>
+                Nous vous attendons ! En cas d'empêchement, merci de nous contacter.
+            </p>
+        </div>
+        
+        <div class="flex gap-4">
+            <a href="{% url 'index' %}" class="flex-1 bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 font-semibold">
+                <i class="fas fa-home mr-2"></i>Retour à l'accueil
+            </a>
+            <a href="{% url 'menu' %}" class="flex-1 bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 font-semibold">
+                <i class="fas fa-utensils mr-2"></i>Voir le menu
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

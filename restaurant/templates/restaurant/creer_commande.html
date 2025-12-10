@@ -1,0 +1,65 @@
+{% extends 'restaurant/base.html' %}
+
+{% block title %}Nouvelle Commande - Restaurant Pro{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h1 class="text-4xl font-bold text-gray-800 mb-8">Nouvelle Commande</h1>
+    
+    <div class="bg-white rounded-lg shadow-xl p-8">
+        <!-- Info table -->
+        <div class="bg-blue-50 rounded-lg p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">Table {{ table.numero }}</h2>
+                    <p class="text-gray-600">Capacité : {{ table.capacite }} places</p>
+                </div>
+                <i class="fas fa-chair text-blue-500 text-5xl"></i>
+            </div>
+        </div>
+        
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Notes (optionnel)</label>
+                {{ form.notes }}
+                <p class="text-sm text-gray-500 mt-1">Instructions spéciales pour cette commande</p>
+            </div>
+            
+            {% if form.notes.errors %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                {{ form.notes.errors.0 }}
+            </div>
+            {% endif %}
+            
+            <div class="flex gap-4">
+                <button type="submit" class="flex-1 bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 font-bold text-lg">
+                    <i class="fas fa-plus mr-2"></i>Créer la commande
+                </button>
+                <a href="{% url 'gestion_tables' %}" class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 font-semibold">
+                    Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        min-height: 100px;
+    }
+    
+    textarea:focus {
+        outline: none;
+        border-color: #f97316;
+        ring: 2px;
+        ring-color: #f97316;
+    }
+</style>
+{% endblock %}

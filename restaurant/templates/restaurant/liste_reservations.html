@@ -1,0 +1,96 @@
+{% extends 'restaurant/base.html' %}
+
+{% block title %}Réservations - Restaurant Pro{% endblock %}
+
+{% block content %}
+<div class="mb-8 flex justify-between items-center">
+    <h1 class="text-4xl font-bold text-gray-800">Réservations</h1>
+    
+    <!-- Filtres -->
+    <form method="get" class="flex gap-2">
+        <input type="date" name="date" value="{{ request.GET.date }}"
+               class="px-4 py-2 border border-gray-300 rounded-lg">
+        <select name="statut" class="px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="">Tous les statuts</option>
+            <option value="EN_ATTENTE" {% if request.GET.statut == 'EN_ATTENTE' %}selected{% endif %}>En attente</option>
+            <option value="CONFIRMEE" {% if request.GET.statut == 'CONFIRMEE' %}selected{% endif %}>Confirmée</option>
+            <option value="ANNULEE" {% if request.GET.statut == 'ANNULEE' %}selected{% endif %}>Annulée</option>
+            <option value="TERMINEE" {% if request.GET.statut == 'TERMINEE' %}selected{% endif %}>Terminée</option>
+        </select>
+        <button type="submit" class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600">
+            Filtrer
+        </button>
+    </form>
+</div>
+
+<!-- Liste des réservations -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {% for reservation in reservations %}
+    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow">
+        <div class="flex justify-between items-start mb-4">
+            <div>
+                <h3 class="text-xl font-bold text-gray-800">{{ reservation.client_nom }}</h3>
+                <p class="text-gray-600">
+                    <i class="fas fa-phone mr-1"></i>{{ reservation.client_telephone }}
+                </p>
+                {% if reservation.client_email %}
+                <p class="text-gray-600">
+                    <i class="fas fa-envelope mr-1"></i>{{ reservation.client_email }}
+                </p>
+                {% endif %}
+            </div>
+            
+            <div>
+                {% if reservation.statut == 'EN_ATTENTE' %}
+                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold">
+                    En attente
+                </span>
+                {% elif reservation.statut == 'CONFIRMEE' %}
+                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
+                    Confirmée
+                </span>
+                {% elif reservation.statut == 'ANNULEE' %}
+                <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-semibold">
+                    Annulée
+                </span>
+                {% else %}
+                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-semibold">
+                    Terminée
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="border-t border-b py-4 my-4 space-y-2">
+            <div class="flex justify-between">
+                <span class="text-gray-600"><i class="fas fa-calendar mr-2"></i>Date</span>
+                <span class="font-semibold">{{ reservation.date_reservation|date:"d/m/Y à H:i" }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-gray-600"><i class="fas fa-chair mr-2"></i>Table</span>
+                <span class="font-semibold">Table {{ reservation.table.numero }} ({{ reservation.table.capacite }} places)</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-gray-600"><i class="fas fa-users mr-2"></i>Personnes</span>
+                <span class="font-semibold">{{ reservation.nombre_personnes }}</span>
+            </div>
+        </div>
+        
+        {% if reservation.notes %}
+        <div class="bg-gray-50 rounded p-3 mb-4">
+            <p class="text-sm text-gray-700"><i class="fas fa-sticky-note mr-2"></i>{{ reservation.notes }}</p>
+        </div>
+        {% endif %}
+        
+        <div class="text-sm text-gray-500">
+            <i class="fas fa-clock mr-1"></i>Créée le {{ reservation.date_creation|date:"d/m/Y à H:i" }}
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-span-2 bg-white rounded-lg shadow-md p-12 text-center">
+        <i class="fas fa-calendar-times text-gray-400 text-6xl mb-4"></i>
+        <p class="text-xl text-gray-600">Aucune réservation trouvée</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

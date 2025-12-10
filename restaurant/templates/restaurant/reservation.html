@@ -1,0 +1,287 @@
+{% block title %}Réservation - Restaurant Pro{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <h1 class="title">Réserver une Table</h1>
+    
+    <div class="form-container">
+        <form method="post" class="form">
+            {% csrf_token %}
+            
+            <!-- Informations client -->
+            <div class="section">
+                <h2 class="section-title">Vos informations</h2>
+                
+                <div class="grid">
+                    <div>
+                        <label class="label">Nom complet *</label>
+                        {{ form.client_nom }}
+                        {% if form.client_nom.errors %}
+                        <p class="error">{{ form.client_nom.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label class="label">Téléphone *</label>
+                        {{ form.client_telephone }}
+                        {% if form.client_telephone.errors %}
+                        <p class="error">{{ form.client_telephone.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="label">Email</label>
+                    {{ form.client_email }}
+                    {% if form.client_email.errors %}
+                    <p class="error">{{ form.client_email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Détails réservation -->
+            <div class="section">
+                <h2 class="section-title">Détails de la réservation</h2>
+                
+                <div class="grid">
+                    <div>
+                        <label class="label">Table *</label>
+                        {{ form.table }}
+                        {% if form.table.errors %}
+                        <p class="error">{{ form.table.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label class="label">Nombre de personnes *</label>
+                        {{ form.nombre_personnes }}
+                        {% if form.nombre_personnes.errors %}
+                        <p class="error">{{ form.nombre_personnes.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="label">Date et heure *</label>
+                    {{ form.date_reservation }}
+                    {% if form.date_reservation.errors %}
+                    <p class="error">{{ form.date_reservation.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="input-group">
+                    <label class="label">Notes spéciales</label>
+                    {{ form.notes }}
+                    {% if form.notes.errors %}
+                    <p class="error">{{ form.notes.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Tables disponibles -->
+            <div class="available-tables">
+                <h3 class="available-tables-title">
+                    <i class="fas fa-info-circle icon"></i>Tables disponibles
+                </h3>
+                <div class="tables-grid">
+                    {% for table in tables_disponibles %}
+                    <div class="table-card">
+                        <i class="fas fa-chair icon-available"></i>
+                        <p class="table-number">Table {{ table.numero }}</p>
+                        <p class="table-capacity">{{ table.capacite }} places</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Boutons -->
+            <div class="buttons-container">
+                <button type="submit" class="submit-button">
+                    <i class="fas fa-check icon"></i>Confirmer la réservation
+                </button>
+                <a href="{% url 'index' %}" class="cancel-button">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9fafb;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #4a5568;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .form-container {
+        background-color: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+    }
+
+    .form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .section {
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+            font-weight: bold;
+        color: #4a5568;
+        margin-bottom: 1rem;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    @media (min-width: 768px) {
+        .grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .label {
+        display: block;
+        font-weight: bold;
+        color: #4a5568;
+        margin-bottom: 0.5rem;
+    }
+
+    .input-group {
+        margin-top: 1rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="datetime-local"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+    }
+    
+    input:focus,
+    select:focus,
+    textarea:focus {
+        outline: none;
+        border-color: #f97316;
+    }
+
+    .error {
+        color: #e53e3e;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    .available-tables {
+        background-color: #ebf8ff;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .available-tables-title {
+        font-weight: bold;
+        color: #4a5568;
+        margin-bottom: 0.5rem;
+    }
+
+    .tables-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+
+    @media (min-width: 768px) {
+        .tables-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    .table-card {
+        background-color: white;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+    }
+
+    .table-number {
+        font-weight: bold;
+    }
+
+    .table-capacity {
+        color: #718096;
+        font-size: 0.875rem;
+    }
+
+    .buttons-container {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .submit-button {
+        flex: 1;
+        background-color: #f97316;
+        color: white;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: bold;
+        font-size: 1.125rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .submit-button:hover {
+        background-color: #ea580c;
+    }
+
+    .cancel-button {
+        display: inline-block;
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        font-weight: bold;
+        color: #4a5568;
+        transition: background-color 0.3s;
+    }
+
+    .cancel-button:hover {
+        background-color: #edf2f7;
+    }
+
+    .icon {
+        margin-right: 0.5rem;
+    }
+
+    .icon-available {
+        color: #38a169;
+    }
+</style>
+{% endblock %}

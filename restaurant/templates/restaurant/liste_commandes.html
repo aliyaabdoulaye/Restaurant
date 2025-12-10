@@ -1,0 +1,106 @@
+{% extends 'restaurant/base.html' %}
+
+{% block title %}Commandes - Restaurant Pro{% endblock %}
+
+{% block content %}
+<div class="mb-8 flex justify-between items-center">
+    <h1 class="text-4xl font-bold text-gray-800">Commandes</h1>
+    
+    <!-- Filtres -->
+    <form method="get" class="flex gap-2">
+        <select name="statut" class="px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="">Tous les statuts</option>
+            <option value="EN_COURS">En cours</option>
+            <option value="PRETE">Prête</option>
+            <option value="SERVIE">Servie</option>
+            <option value="PAYEE">Payée</option>
+        </select>
+        <button type="submit" class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600">
+            Filtrer
+        </button>
+    </form>
+</div>
+
+<!-- Liste des commandes -->
+<div class="space-y-4">
+    {% for commande in commandes %}
+    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+        <div class="p-6">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-800">Commande #{{ commande.id }}</h3>
+                    <p class="text-gray-600">
+                        <i class="fas fa-chair mr-1"></i>Table {{ commande.table.numero }} • 
+                        <i class="fas fa-user mr-1"></i>{{ commande.serveur.get_full_name }}
+                    </p>
+                    <p class="text-sm text-gray-500 mt-1">
+                        <i class="fas fa-clock mr-1"></i>{{ commande.date_creation|date:"d/m/Y H:i" }}
+                    </p>
+                </div>
+                
+                <div class="text-right">
+                    {% if commande.statut == 'EN_COURS' %}
+                    <span class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold">
+                        En cours
+                    </span>
+                    {% elif commande.statut == 'PRETE' %}
+                    <span class="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
+                        Prête
+                    </span>
+                    {% elif commande.statut == 'SERVIE' %}
+                    <span class="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
+                        Servie
+                    </span>
+                    {% else %}
+                    <span class="px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold">
+                        Payée
+                    </span>
+                    {% endif %}
+                    
+                    <p class="text-2xl font-bold text-orange-500 mt-2">
+                        {{ commande.total|floatformat:0 }} FCFA
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Items -->
+            <div class="border-t pt-4 mb-4">
+                <h4 class="font-semibold text-gray-700 mb-2">Articles commandés:</h4>
+                <div class="space-y-2">
+                    {% for item in commande.items.all %}
+                    <div class="flex justify-between items-center bg-gray-50 p-3 rounded">
+                        <span class="text-gray-800">
+                            <span class="font-bold">{{ item.quantite }}x</span> {{ item.plat.nom }}
+                        </span>
+                        <span class="font-semibold text-gray-700">
+                            {{ item.subtotal|floatformat:0 }} FCFA
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex gap-2">
+                <a href="{% url 'detail_commande' commande.id %}" 
+                   class="flex-1 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 text-center font-semibold">
+                    <i class="fas fa-eye mr-1"></i>Détails
+                </a>
+                
+                {% if commande.statut != 'PAYEE' %}
+                <a href="{% url 'generer_facture' commande.id %}" 
+                   class="flex-1 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 text-center font-semibold">
+                    <i class="fas fa-file-invoice mr-1"></i>Générer facture
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="bg-white rounded-lg shadow-md p-12 text-center">
+        <i class="fas fa-shopping-cart text-gray-400 text-6xl mb-4"></i>
+        <p class="text-xl text-gray-600">Aucune commande trouvée</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

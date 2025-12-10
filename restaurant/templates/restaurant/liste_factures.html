@@ -1,0 +1,105 @@
+{% extends 'restaurant/base.html' %}
+
+{% block title %}Factures - Restaurant Pro{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-4xl font-bold text-gray-800 mb-4">Factures</h1>
+    
+    <!-- Statistique globale -->
+    <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white">
+        <div class="flex justify-between items-center">
+            <div>
+                <p class="text-green-100 text-sm font-semibold">Chiffre d'affaires total</p>
+                <p class="text-4xl font-bold">{{ total_factures|floatformat:0 }} FCFA</p>
+            </div>
+            <i class="fas fa-money-bill-wave text-6xl text-green-200 opacity-50"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Liste des factures -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        N° Facture
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Date
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Table
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Méthode
+                    </th>
+                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Montant TTC
+                    </th>
+                    <th class="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Statut
+                    </th>
+                    <th class="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for facture in factures %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="font-semibold text-gray-900">{{ facture.numero_facture }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">{{ facture.date_emission|date:"d/m/Y" }}</div>
+                        <div class="text-xs text-gray-500">{{ facture.date_emission|date:"H:i" }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="text-sm font-medium text-gray-900">
+                            Table {{ facture.commande.table.numero }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="text-sm text-gray-700">
+                            {{ facture.get_methode_paiement_display }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                        <div class="text-lg font-bold text-orange-500">
+                            {{ facture.montant_ttc|floatformat:0 }} FCFA
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        {% if facture.payee %}
+                        <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
+                            <i class="fas fa-check-circle mr-1"></i>Payée
+                        </span>
+                        {% else %}
+                        <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-semibold">
+                            <i class="fas fa-times-circle mr-1"></i>Non payée
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <a href="{% url 'detail_facture' facture.id %}" 
+                           class="text-blue-600 hover:text-blue-900 font-semibold">
+                            <i class="fas fa-eye mr-1"></i>Voir
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center">
+                        <i class="fas fa-file-invoice text-gray-400 text-6xl mb-4"></i>
+                        <p class="text-xl text-gray-600">Aucune facture trouvée</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

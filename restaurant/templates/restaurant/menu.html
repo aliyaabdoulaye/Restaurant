@@ -1,0 +1,81 @@
+{% extends 'restaurant/base.html' %}
+
+{% block title %}Menu - Restaurant Pro{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-4xl font-bold text-gray-800 mb-4">Notre Menu</h1>
+    
+    <!-- Filtres et Recherche -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <form method="get" class="flex flex-col md:flex-row gap-4">
+            <!-- Recherche -->
+            <div class="flex-1">
+                <input type="text" name="search" placeholder="Rechercher un plat..." 
+                       value="{{ request.GET.search }}"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+            </div>
+            
+            <!-- Filtrage par catégorie -->
+            <div class="md:w-64">
+                <select name="categorie" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                    <option value="">Toutes les catégories</option>
+                    {% for categorie in categories %}
+                    <option value="{{ categorie.id }}" {% if selected_categorie == categorie.id|stringformat:"s" %}selected{% endif %}>
+                        {{ categorie.nom }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <button type="submit" class="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 font-semibold">
+                <i class="fas fa-search mr-2"></i>Rechercher
+            </button>
+        </form>
+    </div>
+    
+    <!-- Liste des plats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for plat in plats %}
+        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+            {% if plat.image %}
+            <img src="{{ plat.image.url }}" alt="{{ plat.nom }}" class="w-full h-56 object-cover">
+            {% else %}
+            <div class="w-full h-56 bg-gradient-to-br from-orange-400 to-red-400 flex items-center justify-center">
+                <i class="fas fa-drumstick-bite text-white text-6xl"></i>
+            </div>
+            {% endif %}
+            
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-xl font-bold text-gray-800">{{ plat.nom }}</h3>
+                    <span class="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs font-semibold">
+                        {{ plat.categorie.nom }}
+                    </span>
+                </div>
+                
+                <p class="text-gray-600 mb-4">{{ plat.description }}</p>
+                
+                <div class="flex justify-between items-center">
+                    <span class="text-2xl font-bold text-orange-500">{{ plat.prix }} FCFA</span>
+                    {% if plat.disponible %}
+                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
+                        <i class="fas fa-check-circle mr-1"></i>Disponible
+                    </span>
+                    {% else %}
+                    <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-semibold">
+                        <i class="fas fa-times-circle mr-1"></i>Indisponible
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-3 text-center py-12">
+            <i class="fas fa-search text-gray-400 text-6xl mb-4"></i>
+            <p class="text-xl text-gray-600">Aucun plat trouvé</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

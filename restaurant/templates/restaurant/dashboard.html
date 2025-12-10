@@ -1,0 +1,143 @@
+{% extends 'restaurant/base.html' %}
+
+{% block title %}Dashboard - Restaurant Pro{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-4xl font-bold text-gray-800 mb-2">Tableau de Bord</h1>
+    <p class="text-gray-600">Vue d'ensemble des opérations du jour</p>
+</div>
+
+<!-- Statistiques -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <!-- Commandes du jour -->
+    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-blue-100 text-sm font-semibold">Commandes</p>
+                <p class="text-3xl font-bold">{{ commandes_jour }}</p>
+            </div>
+            <i class="fas fa-shopping-cart text-5xl text-blue-200 opacity-50"></i>
+        </div>
+    </div>
+    
+    <!-- Réservations -->
+    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-green-100 text-sm font-semibold">Réservations</p>
+                <p class="text-3xl font-bold">{{ reservations_jour }}</p>
+            </div>
+            <i class="fas fa-calendar-check text-5xl text-green-200 opacity-50"></i>
+        </div>
+    </div>
+    
+    <!-- Chiffre d'affaires -->
+    <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-lg p-6 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-orange-100 text-sm font-semibold">CA du jour</p>
+                <p class="text-2xl font-bold">{{ chiffre_affaires_jour|floatformat:0 }} F</p>
+            </div>
+            <i class="fas fa-money-bill-wave text-5xl text-orange-200 opacity-50"></i>
+        </div>
+    </div>
+    
+    <!-- Tables occupées -->
+    <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-purple-100 text-sm font-semibold">Tables occupées</p>
+                <p class="text-3xl font-bold">{{ tables_occupees }}</p>
+            </div>
+            <i class="fas fa-chair text-5xl text-purple-200 opacity-50"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Navigation rapide -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <a href="{% url 'gestion_tables' %}" class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow p-6 block">
+        <div class="flex items-center">
+            <div class="bg-blue-100 rounded-full p-4 mr-4">
+                <i class="fas fa-chair text-blue-500 text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-gray-800">Gérer les Tables</h3>
+                <p class="text-gray-600 text-sm">Disponibilité et attribution</p>
+            </div>
+        </div>
+    </a>
+    
+    <a href="{% url 'liste_commandes' %}" class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow p-6 block">
+        <div class="flex items-center">
+            <div class="bg-green-100 rounded-full p-4 mr-4">
+                <i class="fas fa-clipboard-list text-green-500 text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-gray-800">Commandes</h3>
+                <p class="text-gray-600 text-sm">Voir toutes les commandes</p>
+            </div>
+        </div>
+    </a>
+    
+    <a href="{% url 'liste_factures' %}" class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow p-6 block">
+        <div class="flex items-center">
+            <div class="bg-orange-100 rounded-full p-4 mr-4">
+                <i class="fas fa-file-invoice text-orange-500 text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-gray-800">Factures</h3>
+                <p class="text-gray-600 text-sm">Historique et paiements</p>
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- Activité récente -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Commandes récentes -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">
+            <i class="fas fa-clock text-blue-500 mr-2"></i>Commandes récentes
+        </h2>
+        <div class="space-y-3">
+            {% for commande in commandes_recentes %}
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100">
+                <div>
+                    <p class="font-semibold text-gray-800">Commande #{{ commande.id }}</p>
+                    <p class="text-sm text-gray-600">Table {{ commande.table.numero }}</p>
+                </div>
+                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold">
+                    {{ commande.get_statut_display }}
+                </span>
+            </div>
+            {% empty %}
+            <p class="text-gray-500 text-center py-4">Aucune commande aujourd'hui</p>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Réservations récentes -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">
+            <i class="fas fa-calendar text-green-500 mr-2"></i>Réservations récentes
+        </h2>
+        <div class="space-y-3">
+            {% for reservation in reservations_recentes %}
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100">
+                <div>
+                    <p class="font-semibold text-gray-800">{{ reservation.client_nom }}</p>
+                    <p class="text-sm text-gray-600">{{ reservation.date_reservation|date:"d/m/Y H:i" }}</p>
+                </div>
+                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
+                    {{ reservation.nombre_personnes }} pers.
+                </span>
+            </div>
+            {% empty %}
+            <p class="text-gray-500 text-center py-4">Aucune réservation aujourd'hui</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

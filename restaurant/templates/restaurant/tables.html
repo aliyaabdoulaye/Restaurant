@@ -1,0 +1,88 @@
+{% extends 'restaurant/base.html' %}
+
+{% block title %}Gestion des Tables - Restaurant Pro{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-4xl font-bold text-gray-800 mb-4">Gestion des Tables</h1>
+</div>
+
+<!-- Statistiques -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-green-100 rounded-lg p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-green-800 font-semibold">Tables disponibles</p>
+                <p class="text-3xl font-bold text-green-600">{{ tables_disponibles.count }}</p>
+            </div>
+            <i class="fas fa-check-circle text-green-500 text-4xl"></i>
+        </div>
+    </div>
+    
+    <div class="bg-red-100 rounded-lg p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-red-800 font-semibold">Tables occupées</p>
+                <p class="text-3xl font-bold text-red-600">{{ tables_occupees.count }}</p>
+            </div>
+            <i class="fas fa-times-circle text-red-500 text-4xl"></i>
+        </div>
+    </div>
+    
+    <div class="bg-blue-100 rounded-lg p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-blue-800 font-semibold">Total tables</p>
+                <p class="text-3xl font-bold text-blue-600">{{ tables.count }}</p>
+            </div>
+            <i class="fas fa-chair text-blue-500 text-4xl"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Liste des tables -->
+<div class="bg-white rounded-lg shadow-md p-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Toutes les tables</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {% for table in tables %}
+        <div class="border-2 {% if table.disponible %}border-green-500 bg-green-50{% else %}border-red-500 bg-red-50{% endif %} rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
+            <div class="mb-4">
+                <i class="fas fa-chair text-5xl {% if table.disponible %}text-green-500{% else %}text-red-500{% endif %}"></i>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">Table {{ table.numero }}</h3>
+            <p class="text-gray-600 mb-4">
+                <i class="fas fa-users mr-1"></i>{{ table.capacite }} places
+            </p>
+            
+            <div class="space-y-2">
+                {% if table.disponible %}
+                <span class="block px-4 py-2 bg-green-500 text-white rounded-full font-semibold">
+                    <i class="fas fa-check-circle mr-1"></i>Disponible
+                </span>
+                <a href="{% url 'creer_commande' table.id %}" 
+                   class="block px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold transition-colors">
+                    <i class="fas fa-plus mr-1"></i>Nouvelle commande
+                </a>
+                {% else %}
+                <span class="block px-4 py-2 bg-red-500 text-white rounded-full font-semibold">
+                    <i class="fas fa-times-circle mr-1"></i>Occupée
+                </span>
+                {% endif %}
+                
+                <a href="{% url 'toggle_table' table.id %}" 
+                   class="block px-4 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 font-semibold transition-colors">
+                    <i class="fas fa-exchange-alt mr-1"></i>Changer statut
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-4 text-center py-12">
+            <i class="fas fa-chair text-gray-400 text-6xl mb-4"></i>
+            <p class="text-xl text-gray-600">Aucune table configurée</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
